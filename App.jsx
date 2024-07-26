@@ -1,6 +1,9 @@
 import { useState } from "react";
 import dayjs from "dayjs";
+import emailjs from 'emailjs-com';
 import "./App.css";
+
+emailjs.init("1mVDNqXj8B9uDcnxQ");
 
 const FormularioAgendamento = () => {
   const [formData, setFormData] = useState({
@@ -38,10 +41,22 @@ const FormularioAgendamento = () => {
       ];
       setSelectedDays({ ...selectedDays, [day]: newTimes });
       console.log(formData);
+
+      sendEmail(); // Adicione esta chamada para enviar o e-mail
       clearForm();
     } else {
       console.log("Formulário inválido. Por favor, corrija os erros.");
     }
+  };
+
+  const sendEmail = () => {
+    emailjs.send('service_3ecqa6l', 'template_hi4pbk4', formData)
+      .then((response) => {
+        console.log('Email enviado com sucesso:', response);
+      })
+      .catch((error) => {
+        console.error('Erro ao enviar o email:', error);
+      });
   };
 
   const formIsValid = () => {
@@ -50,8 +65,7 @@ const FormularioAgendamento = () => {
 
     // Validar campo de NOME
     if (!formData.nome) {
-      errors.nome =
-        "Por favor, informe o nome do responsável pelo agendamento.";
+      errors.nome = "Por favor, informe o nome do responsável pelo agendamento.";
       isValid = false;
     }
 
@@ -68,8 +82,7 @@ const FormularioAgendamento = () => {
     } else {
       const day = dayjs(formData.dia).format("YYYY-MM-DD");
       if (selectedDays[day] && selectedDays[day].length >= 2) {
-        errors.dia =
-          "Não é possível agendar mais de dois horários no mesmo dia.";
+        errors.dia = "Não é possível agendar mais de dois horários no mesmo dia.";
         isValid = false;
       }
     }
@@ -91,23 +104,18 @@ const FormularioAgendamento = () => {
 
     // Validar campo de MATERIAL UTILIZADO
     if (!formData.materiaisUtilizados) {
-      errors.materiaisUtilizados =
-        "Por favor, informe os materiais utilizados.";
+      errors.materiaisUtilizados = "Por favor, informe os materiais utilizados.";
       isValid = false;
     }
 
     // Validar campo de MATERIAL DANIFICADO
     if (!formData.algumMaterialFoiDanificado) {
-      errors.algumMaterialFoiDanificado =
-        "Por favor, informe se algum material foi danificado.";
+      errors.algumMaterialFoiDanificado = "Por favor, informe se algum material foi danificado.";
       isValid = false;
     }
 
     // Validar campo de QUAL MATERIAL FOI DANIFICADO
-    if (
-      formData.algumMaterialFoiDanificado === "sim" &&
-      !formData.qualMaterial
-    ) {
+    if (formData.algumMaterialFoiDanificado === "sim" && !formData.qualMaterial) {
       errors.qualMaterial = "Por favor, informe qual material foi danificado.";
       isValid = false;
     }
@@ -120,8 +128,7 @@ const FormularioAgendamento = () => {
 
     // Validar campo de MATERIAL EM USO
     if (!formData.permaneceEmUso) {
-      errors.permaneceEmUso =
-        "Por favor, informe se algum material permanece em uso.";
+      errors.permaneceEmUso = "Por favor, informe se algum material permanece em uso.";
       isValid = false;
     }
 
@@ -138,12 +145,8 @@ const FormularioAgendamento = () => {
     }
 
     // Validar campo de MOTIVO DA UTILIZAÇÃO PROLONGADA
-    if (
-      formData.permaneceEmUso === "sim" &&
-      !formData.motivoUtilizacaoProlongada
-    ) {
-      errors.motivoUtilizacaoProlongada =
-        "Por favor, informe o motivo da utilização prolongada.";
+    if (formData.permaneceEmUso === "sim" && !formData.motivoUtilizacaoProlongada) {
+      errors.motivoUtilizacaoProlongada = "Por favor, informe o motivo da utilização prolongada.";
       isValid = false;
     }
 
